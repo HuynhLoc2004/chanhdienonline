@@ -11,6 +11,10 @@ Mã nguồn chia sẻ miễn phí (MIT). Có hai phần:
 | `index.html`, `assets/` | Bản web tĩnh cho mọi người tự vào ngồi tụng (đăng lên Cloudflare Pages) |
 | `live/` | Bộ công cụ phát LIVE: server Node, overlay 9:16, bảng điều khiển |
 
+## Chạy nhanh trên Windows
+
+Nhấp đúp `run.bat` ở thư mục gốc. File sẽ tự cài dependency nếu cần, mở web tại `http://localhost:4173` và mở bảng điều khiển LIVE tại `http://localhost:3000/live/control.html`.
+
 ## Chạy bộ LIVE trên máy phát
 
 Cần Node.js 20 trở lên.
