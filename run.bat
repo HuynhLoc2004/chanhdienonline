@@ -32,7 +32,8 @@ if not exist "%LIVE%\node_modules\ws" (
   popd
 )
 
-echo [2/3] Dang mo server LIVE tai http://localhost:3000 ...
+echo [2/3] Dang kiem tra cong 3000 va khoi dong server LIVE...
+for /f "tokens=5" %%a in ('netstat -aon ^| findstr /r ":3000\>" ^| findstr LISTENING') do taskkill /f /pid %%a >nul 2>nul
 start "Chanh Dien LIVE" /D "%LIVE%" cmd /k npm start
 
 echo [3/3] Dang mo web tinh tai http://localhost:4173 ...

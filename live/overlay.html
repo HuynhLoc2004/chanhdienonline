@@ -58,8 +58,236 @@ html,body{margin:0;height:100%;background:#000;overflow:hidden;font-family:var(-
 #gift .pray{font-family:var(--display);font-style:italic;font-size:32px;color:var(--fg);margin-top:12px;opacity:.95}
 /* enable sound (needed once: browsers block autoplay) */
 #unmute{position:absolute;z-index:9;left:50%;top:1540px;transform:translateX(-50%);font:600 36px var(--body);padding:22px 44px;border-radius:24px;border:3px solid var(--gold2);background:var(--red);color:#fff4dc;cursor:pointer}
-#conn{position:absolute;z-index:4;right:16px;bottom:12px;font-size:20px;color:var(--muted);opacity:.6}
 @media (prefers-reduced-motion:reduce){#chant,#gift{transition:none}}
+#stage.crowded #plaque{box-shadow:none}
+#stage.crowded #gift{box-shadow:none}
+#stage.crowded .dot{box-shadow:none}
+#stage.crowded .card{backdrop-filter:none}
+
+/* ======================= Fortune Divination ======================= */
+.fortune-layer{
+  position:absolute; inset:0; z-index:9999; pointer-events:none;
+  display:flex; align-items:center; justify-content:center;
+  opacity:0; visibility:hidden; transition:opacity .45s ease, visibility .45s ease;
+}
+.fortune-layer.show{
+  opacity:1; visibility:visible;
+}
+
+/* Phase 1: Ritual Tube Shake & Fortune Stick Falling */
+.fortune-shake{
+  position:absolute; left:50%; top:50%; transform:translate(-50%,-50%);
+  display:flex; flex-direction:column; align-items:center; justify-content:center;
+  opacity:0; pointer-events:none; transition:opacity .35s;
+}
+.fortune-layer.phase-shake .fortune-shake{
+  opacity:1;
+}
+.f-shake-aura{
+  position:absolute; width:720px; height:720px; border-radius:50%;
+  background:radial-gradient(circle, rgba(255,217,138,.5) 0%, rgba(226,176,79,.25) 45%, transparent 72%);
+  filter:blur(35px); animation:auraPulse 1.1s infinite alternate ease-in-out;
+}
+@keyframes auraPulse{
+  from{transform:scale(.88); opacity:.7;}
+  to{transform:scale(1.15); opacity:1;}
+}
+.f-ceremony-stage{
+  position:relative; width:480px; height:520px; display:flex; align-items:center; justify-content:center;
+}
+.f-tube-wrap{
+  position:absolute; left:50%; top:48%;
+  transform:translate(-50%, -50%);
+  transform-origin:50% 88%;
+}
+.fortune-layer.phase-shake .f-tube-wrap{
+  animation:shakeTube 1.85s cubic-bezier(.36,.07,.19,.97) forwards;
+}
+.fortune-layer:not(.phase-shake) .f-tube-wrap{
+  animation:none;
+}
+.f-tube-art{
+  width:180px; height:auto; object-fit:contain;
+  filter:drop-shadow(0 15px 30px rgba(0,0,0,.95)) drop-shadow(0 0 35px rgba(226,176,79,.6));
+}
+@keyframes shakeTube{
+  0%{
+    transform:translate(-50%, calc(-50% + 40px)) rotate(0deg) scale(.85);
+    opacity:0;
+  }
+  10%{
+    transform:translate(-50%, -50%) rotate(0deg) scale(1);
+    opacity:1;
+  }
+  /* Vigorously shake left and right */
+  18%{ transform:translate(calc(-50% - 32px), calc(-50% - 15px)) rotate(-24deg); }
+  26%{ transform:translate(calc(-50% + 32px), calc(-50% + 10px)) rotate(24deg); }
+  34%{ transform:translate(calc(-50% - 36px), calc(-50% - 18px)) rotate(-28deg); }
+  42%{ transform:translate(calc(-50% + 36px), calc(-50% + 14px)) rotate(28deg); }
+  50%{ transform:translate(calc(-50% - 38px), calc(-50% - 20px)) rotate(-30deg); }
+  58%{ transform:translate(calc(-50% + 38px), calc(-50% + 16px)) rotate(30deg); }
+  66%{ transform:translate(calc(-50% - 30px), calc(-50% - 14px)) rotate(-24deg); }
+  74%{ transform:translate(calc(-50% + 28px), calc(-50% + 10px)) rotate(22deg); }
+  82%{ transform:translate(calc(-50% - 18px), calc(-50% - 6px)) rotate(-14deg); }
+  90%{ transform:translate(-50%, -50%) rotate(0deg) scale(1); opacity:1; }
+  96%{ transform:translate(-50%, -50%) rotate(0deg) scale(1); opacity:.85; }
+  100%{ transform:translate(-50%, calc(-50% + 25px)) rotate(0deg) scale(.9); opacity:0; }
+}
+
+.f-stick-fall-wrap{
+  position:absolute; left:50%; top:48%;
+  transform:translate(-50%, -50%);
+  pointer-events:none;
+}
+.f-stick-fall{
+  width:46px; height:auto; object-fit:contain;
+  transform-origin:50% 50%;
+  opacity:0;
+}
+.fortune-layer.phase-shake .f-stick-fall{
+  animation:stickDropOut 1.85s ease-out forwards;
+}
+.fortune-layer:not(.phase-shake) .f-stick-fall{
+  animation:none;
+  opacity:0;
+}
+@keyframes stickDropOut{
+  0%, 46%{
+    opacity:0;
+    transform:translate(-50%, -100px) rotate(15deg) scale(.7);
+  }
+  49%{
+    opacity:1;
+    transform:translate(calc(-50% + 20px), -130px) rotate(25deg) scale(.9);
+    filter:drop-shadow(0 0 15px #ffd98a);
+  }
+  60%{
+    opacity:1;
+    /* Shoots up out of the top of the cup */
+    transform:translate(calc(-50% + 60px), -200px) rotate(42deg) scale(1.05);
+    filter:drop-shadow(0 0 25px #fffae0) drop-shadow(0 0 45px #ffd98a);
+  }
+  74%{
+    opacity:1;
+    /* Arching down toward the floor */
+    transform:translate(calc(-50% + 115px), -35px) rotate(68deg) scale(1.15);
+    filter:drop-shadow(0 0 30px #fff) drop-shadow(0 0 50px #ffd98a);
+  }
+  86%{
+    opacity:1;
+    /* Lands on the mat/floor */
+    transform:translate(calc(-50% + 140px), 115px) rotate(88deg) scale(1.2);
+    filter:drop-shadow(0 0 35px #fff) drop-shadow(0 0 65px #ffd98a);
+  }
+  92%{
+    opacity:1;
+    /* Realistic floor bounce */
+    transform:translate(calc(-50% + 142px), 105px) rotate(85deg) scale(1.2);
+  }
+  97%, 100%{
+    opacity:1;
+    /* Resting settled on the ground */
+    transform:translate(calc(-50% + 145px), 115px) rotate(88deg) scale(1.2);
+    filter:drop-shadow(0 0 45px #fff) drop-shadow(0 0 80px #ffd98a);
+  }
+}
+.f-shake-txt{
+  margin-top:20px; font-family:var(--display); font-size:34px; font-weight:700;
+  color:var(--gold2); letter-spacing:.08em; text-shadow:0 3px 10px rgba(0,0,0,.95), 0 0 25px rgba(226,176,79,.85);
+  background:linear-gradient(180deg, rgba(70,26,10,.95), rgba(30,12,6,.95));
+  border:2px solid var(--gold); border-radius:999px; padding:12px 40px;
+  box-shadow:0 0 0 4px rgba(0,0,0,.4), 0 0 25px rgba(226,176,79,.3) inset;
+}
+
+/* Phase 2: Fortune Modal (Temple Lacquer Style) */
+.fortune-modal{
+  position:absolute; left:50%; top:50%; width:860px; max-width:92%;
+  transform:translate(-50%,-50%) scale(.75);
+  background:radial-gradient(ellipse at 50% 12%, rgba(105,28,14,.97) 0%, rgba(45,15,7,.98) 55%, rgba(18,6,3,.99) 100%);
+  border:3px solid var(--gold); outline:1px solid rgba(255,217,138,.35); outline-offset:4px;
+  border-radius:28px;
+  box-shadow:0 0 0 8px rgba(0,0,0,.6), 0 0 60px rgba(226,176,79,.3) inset, 0 30px 90px rgba(0,0,0,.95);
+  padding:36px 42px 30px; box-sizing:border-box;
+  opacity:0; pointer-events:none; transition:opacity .45s ease, transform .55s cubic-bezier(.18,1.25,.3,1);
+  color:var(--fg); text-align:center;
+}
+.fortune-layer.phase-modal .fortune-modal{
+  opacity:1; transform:translate(-50%,-50%) scale(1); pointer-events:auto;
+}
+.fortune-layer.fade-out .fortune-modal{
+  opacity:0; transform:translate(-50%,-50%) scale(.92); transition:opacity .55s ease, transform .55s ease;
+}
+.fortune-layer.fade-out .fortune-shake{
+  opacity:0;
+}
+.f-scroll-corner{
+  position:absolute; width:34px; height:34px; border:3px solid var(--gold); pointer-events:none;
+}
+.f-scroll-corner.tl{top:12px; left:12px; border-right:none; border-bottom:none;}
+.f-scroll-corner.tr{top:12px; right:12px; border-left:none; border-bottom:none;}
+.f-scroll-corner.bl{bottom:12px; left:12px; border-right:none; border-top:none;}
+.f-scroll-corner.br{bottom:12px; right:12px; border-left:none; border-top:none;}
+
+.f-top-lotus{
+  width:115px; height:115px; margin:-75px auto 4px;
+  filter:drop-shadow(0 8px 20px rgba(0,0,0,.6)) drop-shadow(0 0 25px rgba(226,176,79,.4));
+}
+.f-top-lotus img{width:100%; height:100%; object-fit:contain;}
+
+.f-badge{
+  display:inline-block; margin:0 auto 12px;
+  background:linear-gradient(180deg, #9e2819 0%, #5e140b 100%);
+  color:var(--gold2); border:2px solid var(--gold2); border-radius:999px;
+  padding:8px 38px; font-family:var(--display); font-size:28px; font-weight:700;
+  letter-spacing:.15em; text-transform:uppercase;
+  box-shadow:0 4px 15px rgba(0,0,0,.5), 0 0 25px rgba(226,176,79,.35);
+}
+.f-title{
+  margin:0 0 6px; font-family:var(--display); font-size:46px; font-weight:700;
+  color:var(--gold2); letter-spacing:.05em; text-transform:uppercase;
+  text-shadow:0 2px 0 #3a1406, 0 0 25px rgba(255,200,100,.4);
+}
+.f-sub{
+  font-family:var(--display); font-size:26px; font-weight:500; color:var(--fg);
+  letter-spacing:.1em; margin-bottom:14px; opacity:.95;
+}
+.f-user-tag{
+  display:inline-block; background:rgba(226,176,79,.12); border:1px solid rgba(226,176,79,.4);
+  border-radius:999px; padding:6px 26px; font-size:22px; color:var(--muted); margin-bottom:18px;
+}
+.f-user-tag b{color:var(--gold2); font-size:24px;}
+
+.f-poem-card{
+  background:rgba(18,8,4,.75); border:2px solid rgba(226,176,79,.45); border-radius:20px;
+  padding:18px 24px; margin-bottom:16px; box-shadow:inset 0 0 30px rgba(0,0,0,.65);
+}
+.f-poem-head{
+  font-family:var(--display); font-size:20px; font-weight:700; letter-spacing:.14em;
+  color:var(--gold); margin-bottom:10px; opacity:.9;
+}
+.f-poem-lines{
+  font-family:var(--display); font-size:32px; font-style:italic; line-height:1.6;
+  color:#fff3dc; letter-spacing:.02em; text-shadow:0 2px 8px rgba(0,0,0,.9), 0 0 15px rgba(255,217,138,.2);
+}
+
+.f-meaning-card{
+  background:rgba(38,14,7,.85);
+  border:1.5px solid var(--gold); border-radius:18px; padding:16px 24px;
+  color:var(--fg); margin-bottom:14px; box-shadow:0 6px 20px rgba(0,0,0,.4);
+}
+.f-meaning-head{
+  font-family:var(--display); font-size:20px; font-weight:700; letter-spacing:.12em;
+  color:var(--gold2); margin-bottom:8px;
+}
+.f-meaning-content{
+  font-family:var(--body); font-size:23px; line-height:1.5; font-weight:500;
+  color:#f6e9cf;
+}
+
+.f-blessing{
+  font-family:var(--display); font-size:22px; font-style:italic; letter-spacing:.08em;
+  color:var(--gold); opacity:.9; margin-top:8px;
+}
 </style>
 </head>
 <body>
@@ -73,6 +301,7 @@ html,body{margin:0;height:100%;background:#000;overflow:hidden;font-family:var(-
   <div id="guide" class="card ui">
     <div>💬 <b>Bình luận bất kỳ</b> để vào thiền</div>
     <div>Gõ <b>nam · nữ · sư · ni · tiểu · bà · cao tăng</b> để đổi hình</div>
+    <div>🎋 Gõ <b>xin quẻ</b> để bốc xăm cầu an</div>
     <div>🎁 Tặng quà được <b>xướng tên hồi hướng</b></div>
   </div>
   <div id="merit" class="card ui"><h3>✦ Công Đức ✦</h3><ol id="meritList"><li class="empty">Chưa có</li></ol></div>
@@ -80,6 +309,46 @@ html,body{margin:0;height:100%;background:#000;overflow:hidden;font-family:var(-
   <div id="gift" class="ui"><div class="who" id="giftWho"></div><div class="what" id="giftWhat"></div><div class="pray" id="giftPray"></div></div>
   <button id="unmute">🔔 Bấm để bật âm thanh</button>
   <div id="conn">đang kết nối…</div>
+
+  <!-- Fortune Divination Layer -->
+  <div id="fortuneLayer" class="fortune-layer">
+    <div id="fortuneShake" class="fortune-shake">
+      <div class="f-shake-aura"></div>
+      <div class="f-ceremony-stage">
+        <div class="f-tube-wrap">
+          <img class="f-tube-art" src="/assets/fx_fortune_tube.png" onerror="if(!this.dataset.tried){this.dataset.tried=1;this.src='../assets/fx_fortune_tube.png';}" alt="Ống Xăm">
+        </div>
+        <div class="f-stick-fall-wrap">
+          <img class="f-stick-fall" src="/assets/fx_fortune_stick.png" onerror="if(!this.dataset.tried){this.dataset.tried=1;this.src='../assets/fx_fortune_stick.png';}" alt="Thẻ Xăm Rơi">
+        </div>
+      </div>
+      <div class="f-shake-txt">🎋 Đang lắc ống xăm cầu an...</div>
+    </div>
+
+    <div id="fortuneModal" class="fortune-modal">
+      <div class="f-scroll-corner tl"></div>
+      <div class="f-scroll-corner tr"></div>
+      <div class="f-scroll-corner bl"></div>
+      <div class="f-scroll-corner br"></div>
+      <div class="f-top-lotus"><img src="/assets/fx_lotus.png" alt="Sen Vàng"></div>
+      <div class="f-badge" id="fBadge">ĐẠI CÁT</div>
+      <h2 class="f-title" id="fTitle">Quẻ Số 68 — Lộc Mã Đồng Hương</h2>
+      <div class="f-sub" id="fSubtitle">✦ Lộc Tài Cùng Tới ✦</div>
+      <div class="f-user-tag">Thí chủ cầu quẻ: <b id="fUser">Minh An</b></div>
+      
+      <div class="f-poem-card">
+        <div class="f-poem-head">❖ THƠ QUẺ QUAN ÂM ❖</div>
+        <div class="f-poem-lines" id="fPoem"></div>
+      </div>
+
+      <div class="f-meaning-card">
+        <div class="f-meaning-head">✦ LỜI BÀN & KHUYÊN TU TÂM ✦</div>
+        <div class="f-meaning-content" id="fMeaning"></div>
+      </div>
+
+      <div class="f-blessing">❁ Nam Mô Đại Bi Quán Thế Âm Bồ Tát ❁</div>
+    </div>
+  </div>
 </div></div>
 
 <script>
@@ -100,17 +369,18 @@ const avatars = new Map();
 function avatar(url){ if(!url) return null; let im=avatars.get(url); if(!im){ im=new Image(); im.referrerPolicy='no-referrer'; im.src=url; avatars.set(url,im); } return im.naturalWidth?im:null; }
 
 /* ======================= seats ======================= */
+const MAX_SEATS = 500;
 // Floor trapezoid in the painting: back row just below the altar, front row near the bottom.
 const FLOOR = { yTop: 1215, yBot: 1845, halfTop: 290, halfBot: 430 };
-const GRID = { 24:[6,4], 36:[6,6], 64:[8,8], 100:[10,10] };
+const GRID = { 24:[6,4], 36:[6,6], 64:[8,8], 100:[10,10], 500:[20,25] };
 let cap = 24, seats = [];
 function layout(c){
-  cap = c; const [cols, rows] = GRID[c] || GRID[24]; seats = [];
+  cap = c; const [cols, rows] = GRID[c] || (c >= 500 ? GRID[500] : GRID[24]); seats = [];
   for (let r=0;r<rows;r++){
     const t = rows===1 ? .5 : r/(rows-1);                     // 0 = back row
     const y = FLOOR.yTop + (FLOOR.yBot-FLOOR.yTop)*t;
     const half = FLOOR.halfTop + (FLOOR.halfBot-FLOOR.halfTop)*t;
-    const scale = (.26 + .24*t) * (6/cols) ** .75;
+    const scale = cols >= 20 ? (.15 + .10*t) : (.26 + .24*t) * (6/cols) ** .75;
     const gap = 2*half/(cols-1) * .93;                        // room for one name tag
     for (let k=0;k<cols;k++){
       let u = (k-(cols-1)/2)/((cols-1)/2); u = Math.sign(u)*(.14 + .86*Math.abs(u));   // open a centre aisle
@@ -134,7 +404,7 @@ const TEACHERS = [ { name:'Thầy Minh Đạo', skin:'monk', x:300, y:1085, s:.3
 
 function addVisitor(p, instant){
   if (visitors.has(p.id)) { Object.assign(visitors.get(p.id), { name:p.name, skin:p.skin, avatar:p.avatar, coins:p.coins }); return; }
-  const v = { ...p, state:'walk', x:540, y:2020, tx:0, ty:0, frame:0, ft:0, sitT:0, flip:false, fade:0, bubble:null, glow:0, bow:0, phase:Math.random()*6.28 };
+  const v = { ...p, state:'walk', x:540, y:2020, tx:0, ty:0, frame:0, ft:0, sitT:0, flip:false, fade:0, bubble:null, glow:0, bow:0, phase:Math.random()*6.28, recentUntil: instant ? 0 : performance.now() + 5000 };
   visitors.set(p.id, v); order.push(p.id); reseat();
   if (instant || !hasAnim(v.skin) || !v.seat){ v.state='sit'; v.frame=7; v.x=v.tx=v.seat?.x||540; v.y=v.ty=v.seat?.y||1500; v.fade = instant?1:0; }
 }
@@ -160,6 +430,85 @@ function showGift(m){
 }
 let chantHide=null;
 function showChant(text){ document.getElementById('chantText').textContent=text; const el=document.getElementById('chant'); el.classList.add('show'); clearTimeout(chantHide); chantHide=setTimeout(()=>el.classList.remove('show'), 14000); }
+
+/* ======================= fortune modal ======================= */
+let fortuneTimer=null, fortuneFadeTimer=null, fortuneEndTimer=null;
+function showFortune(m){
+  const layer = document.getElementById('fortuneLayer');
+  if (!layer) return;
+
+  // Clear previous timers
+  clearTimeout(fortuneTimer);
+  clearTimeout(fortuneFadeTimer);
+  clearTimeout(fortuneEndTimer);
+
+  // Sound: realistic bamboo clatter rattle for shaking ritual
+  clatterSound();
+
+  // Reset animations cleanly from frame 0
+  layer.classList.remove('phase-modal', 'phase-shake', 'fade-out', 'show');
+  void layer.offsetWidth; // Force CSS reflow to guarantee full keyframe restart
+  layer.classList.add('show', 'phase-shake');
+
+  // Populate data
+  const f = m.fortune || {};
+  document.getElementById('fBadge').textContent = f.badge || 'ĐẠI CÁT';
+  document.getElementById('fTitle').textContent = f.title || 'Quẻ Xăm Cầu An';
+  document.getElementById('fSubtitle').textContent = f.subtitle ? `✦ ${f.subtitle} ✦` : '';
+  document.getElementById('fUser').textContent = m.username || 'Thí chủ';
+  document.getElementById('fMeaning').textContent = f.meaning || '';
+
+  const poemBox = document.getElementById('fPoem');
+  poemBox.innerHTML = '';
+  if (Array.isArray(f.poem)){
+    f.poem.forEach(line => {
+      const d = document.createElement('div');
+      d.textContent = line;
+      poemBox.appendChild(d);
+    });
+  }
+
+  // Phase 1 (1.85s): Cup vigorously shakes left-right -> stick falls out and hits floor -> Phase 2: Modal opens!
+  fortuneTimer = setTimeout(() => {
+    layer.classList.remove('phase-shake');
+    layer.classList.add('phase-modal');
+    bell(true); // Solemn bell chime when auspicious fortune reveals
+  }, 1850);
+
+  // After 7.8s: Smooth fade-out
+  fortuneFadeTimer = setTimeout(() => {
+    layer.classList.add('fade-out');
+  }, 7800);
+
+  // After 8.6s: Reset and hide ready for next
+  fortuneEndTimer = setTimeout(() => {
+    layer.classList.remove('show', 'phase-modal', 'phase-shake', 'fade-out');
+  }, 8600);
+}
+
+function clatterSound(){
+  if (!AC) return;
+  const t = AC.currentTime;
+  for (let i = 0; i < 12; i++) {
+    const time = t + 0.15 + i * 0.12 + (Math.random() - 0.5) * 0.03;
+    const osc = AC.createOscillator();
+    const g = AC.createGain();
+    const bp = AC.createBiquadFilter();
+    osc.type = 'triangle';
+    osc.frequency.setValueAtTime(460 + Math.random() * 220, time);
+    osc.frequency.exponentialRampToValueAtTime(160, time + 0.032);
+    bp.type = 'bandpass';
+    bp.frequency.value = 520;
+    bp.Q.value = 2.5;
+    g.gain.setValueAtTime(0.24, time);
+    g.gain.exponentialRampToValueAtTime(0.001, time + 0.035);
+    osc.connect(bp);
+    bp.connect(g);
+    g.connect(sfx || master);
+    osc.start(time);
+    osc.stop(time + 0.045);
+  }
+}
 
 /* ======================= audio ======================= */
 let AC=null, master=null, musicGain=null, sfx=null, settings={ music:true, mo:true, moBpm:52 };
@@ -228,10 +577,11 @@ function connect(){
       case 'settings': Object.assign(settings,m.settings); applySettings(); if (m.cap!==cap){ layout(m.cap); updateCount(); } break;
       case 'join': if (m.cap!==cap) layout(m.cap); addVisitor(m.v, m.v.demo && visitors.size>8); updateCount(); break;
       case 'leave': removeVisitor(m.id); updateCount(); renderMerit(); break;
-      case 'skin': { const v=visitors.get(m.id); if(v){ v.skin=m.skin; v.glow=.8; if(v.state!=='sit'){ v.state='sit'; v.frame=7; } } } break;
-      case 'chat': { const v=visitors.get(m.id); if(v){ v.bubble={text:m.text, until:performance.now()+6000}; v.bow=.6; } } break;
-      case 'gift': { const v=visitors.get(m.id); if(v){ v.coins=m.total; giftFx(v,m.tier); } renderMerit(); showGift(m); } break;
+      case 'skin': { const v=visitors.get(m.id); if(v){ v.skin=m.skin; v.glow=.8; v.recentUntil=performance.now()+6000; if(v.state!=='sit'){ v.state='sit'; v.frame=7; } } } break;
+      case 'chat': { const v=visitors.get(m.id); if(v){ v.bubble={text:m.text, until:performance.now()+6000}; v.bow=.6; v.recentUntil=performance.now()+8000; } } break;
+      case 'gift': { const v=visitors.get(m.id); if(v){ v.coins=m.total; v.recentUntil=performance.now()+10000; giftFx(v,m.tier); } renderMerit(); showGift(m); } break;
       case 'like': { const v=visitors.get(m.id); if(v) hearts(v,m.n); } break;
+      case 'fortune': showFortune(m); break;
       case 'tts': queueTTS(m.url); break;
       case 'chant': showChant(m.text); bell(); break;
       case 'bell': bell(true); break;
@@ -284,6 +634,13 @@ function frame(now){
   // visitors back to front
   const bubbles=[];
   const list=[...visitors.values()].sort((a,b)=>a.y-b.y);
+  const totalUsers = visitors.size;
+  const isCrowded = totalUsers > 150;
+  if (totalUsers > 100){
+    if (!stage.classList.contains('crowded')) stage.classList.add('crowded');
+  } else {
+    if (stage.classList.contains('crowded')) stage.classList.remove('crowded');
+  }
   for (const v of list){
     const anim=hasAnim(v.skin), s=v.seat?.scale||.4;
     if (v.state==='walk' && v.seat){
@@ -294,9 +651,16 @@ function frame(now){
     } else if (v.state==='sitting'){ v.sitT+=dt; v.frame=4+Math.min(3,Math.floor(v.sitT/.22)); if (v.sitT>.9){ v.state='sit'; v.frame=7; } }
     else if (v.seat){ v.x+=(v.seat.x-v.x)*Math.min(1,dt*3); v.y+=(v.seat.y-v.y)*Math.min(1,dt*3); }      // glide when the grid grows
     v.fade=Math.min(1,v.fade+dt*2); v.glow=Math.max(0,v.glow-dt*.45); v.bow=Math.max(0,v.bow-dt*.7);
-    const ws = v.state==='walk' ? (.26+.26*Math.max(0,Math.min(1,(v.y-FLOOR.yTop)/(FLOOR.yBot-FLOOR.yTop)))) * ((6/((GRID[cap]||GRID[24])[0]))**.7) : s;
-    if (v.glow>0 || v.skin==='master'){ ctx.save(); ctx.globalCompositeOperation='lighter'; ctx.globalAlpha=Math.max(v.glow*.75, v.skin==='master'?.35+.1*Math.sin(t*1.6):0);
-      const g=ctx.createRadialGradient(v.x,v.y-110*ws,8,v.x,v.y-110*ws,200*ws); g.addColorStop(0,'rgba(255,205,120,.95)'); g.addColorStop(1,'rgba(255,160,60,0)'); ctx.fillStyle=g; ctx.fillRect(v.x-230*ws,v.y-340*ws,460*ws,400*ws); ctx.restore(); }
+    const curCols = (GRID[cap] || GRID[24])[0];
+    const depthNorm = Math.max(0, Math.min(1, (v.y - FLOOR.yTop) / (FLOOR.yBot - FLOOR.yTop)));
+    const ws = v.state === 'walk'
+      ? (curCols >= 20 ? (.15 + .10 * depthNorm) : (.26 + .26 * depthNorm) * ((6 / curCols) ** .7))
+      : s;
+    const skipContinuousHalo = totalUsers > 100;
+    if (v.glow > 0.05 || (v.skin === 'master' && !skipContinuousHalo)){
+      ctx.save(); ctx.globalCompositeOperation='lighter'; ctx.globalAlpha=Math.max(v.glow*.75, (!skipContinuousHalo && v.skin==='master') ? .35+.1*Math.sin(t*1.6) : 0);
+      const g=ctx.createRadialGradient(v.x,v.y-110*ws,8,v.x,v.y-110*ws,200*ws); g.addColorStop(0,'rgba(255,205,120,.95)'); g.addColorStop(1,'rgba(255,160,60,0)'); ctx.fillStyle=g; ctx.fillRect(v.x-230*ws,v.y-340*ws,460*ws,400*ws); ctx.restore();
+    }
     const breathe = v.state==='sit' ? Math.sin(t*1.1+v.phase)*2*ws : 0, bowK = v.state==='sit' ? Math.sin(Math.min(1,v.bow)*Math.PI)*.04 : 0;
     ctx.save(); ctx.globalAlpha=v.fade; ctx.translate(v.x,v.y); if (bowK) ctx.transform(1,0,0,1-bowK,0,0);
     let topY;
@@ -304,7 +668,20 @@ function frame(now){
     else { const sk = v.skin==='master'?'monk':v.skin; sprite(A[sk]||A.man,0,breathe,ws*1.05); topY=260*ws; }
     ctx.restore();
     const ty=v.y-topY-14*ws/.4;
-    tag(v.name, v.x, ty, ws, v.skin==='master'||v.coins>=99?'gold':'', avatar(v.avatar), v.state==='sit' ? v.seat?.gap : 0);
+    const isRecent = !isCrowded || (v.recentUntil && now < v.recentUntil) || (v.bubble && now < v.bubble.until) || v.glow > 0.1 || (v.coins >= 99);
+    if (isRecent){
+      tag(v.name, v.x, ty, ws, v.skin==='master'||v.coins>=99?'gold':'', avatar(v.avatar), v.state==='sit' ? v.seat?.gap : 0);
+    } else {
+      const av = avatar(v.avatar);
+      if (av){
+        const r = Math.max(5, Math.round(10*ws/.4));
+        ctx.save(); ctx.beginPath(); ctx.arc(v.x, ty, r, 0, 6.28); ctx.clip(); ctx.drawImage(av, v.x-r, ty-r, r*2, r*2); ctx.restore();
+        ctx.strokeStyle = v.coins > 0 ? '#e2b04f' : 'rgba(226,176,79,.55)'; ctx.lineWidth = 1; ctx.stroke();
+      } else {
+        const r = Math.max(3, Math.round(5.5*ws/.4));
+        ctx.save(); ctx.fillStyle = v.coins > 0 ? '#ffd98a' : 'rgba(246,233,207,.85)'; ctx.beginPath(); ctx.arc(v.x, ty, r, 0, 6.28); ctx.fill(); ctx.restore();
+      }
+    }
     if (v.bubble && now<v.bubble.until) bubbles.push([v.bubble.text, v.x, ty-Math.max(18,30*ws/.4), ws]); else v.bubble=null;
   }
   for (const b of bubbles) bubble(...b);
